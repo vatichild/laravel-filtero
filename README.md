@@ -1,6 +1,4 @@
-Certainly! Here's the updated `README.md` with the information about publishing the configuration:
 
----
 
 # Filtero
 
