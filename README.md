@@ -153,8 +153,3 @@ php artisan vendor:publish --provider="Vati\Filtero\FilteroServiceProvider"
 ## License
 
 The Filtero package is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
----
-
-Feel free to adjust the credits section with your information or any additional sections as needed. Let me know if you
-need further modifications!
