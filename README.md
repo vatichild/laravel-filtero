@@ -25,17 +25,24 @@ composer require vati/filtero
         use FilterTrait;
 
         /**
-         * The attributes that are searchable.
+         * The columns that are searchable.
          *
          * @var array
          */
         protected array $searchable = [
             'status',
-            ['recipient' => ['CONCAT_WS(" ", first_name, last_name)'], 'currency' => ['code']],
+            [
+                'recipient' => [
+                    'CONCAT_WS(" ", first_name, last_name)'
+                ], 
+                'currency' => [
+                    'code'
+                ]
+            ],
         ];
 
         /**
-         * The attributes that are filterable.
+         * The columns that are filterable.
          *
          * @var array
          */
@@ -43,7 +50,34 @@ composer require vati/filtero
             'status',
             'currency_id',
             'provider_transaction_id',
-            ['recipient' => ['country_id', 'city', 'phone', 'email']],
+            [
+                'recipient' => [
+                    'country_id', 
+                    'city', 
+                    'phone', 
+                    'email'
+                ]
+            ],
+        ];
+   
+       /**
+        * The columns that are sortable.
+        *
+        * @var array
+        */
+        protected array $sortable = [
+            'id',
+            'user_id',
+            'recipient_id',
+            'recipient.first_name', //relation sort
+            'payout_id',
+            'estimated_provider_fee{sum}estimated_platform_fee', // sum multiple columns, order must be same in http_query
+            'payment_amount',
+            'total_amount',
+            'currency_id',
+            'status',
+            'reference',
+            'created_at'
         ];
     }
     ```
@@ -87,7 +121,21 @@ Your request can contain various options for filtering, searching, and sorting:
       CONCAT_WS function in your searchable array.
 - **Sort**: Use the `sort` query parameter to specify the sorting column. You can use dot notation for relational
   sorting. Example: `?sort=recipient.first_name`.
-- - Sort by the attribute in descending order: `?sort=-created_at`
+-
+    - Sort by the attribute in descending order: `?sort=-created_at`
+    -
+    - Let's say you want to sort the results based on the sum of `estimated_provider_fee` and `estimated_platform_fee`,
+      in
+      ascending order. Your request URL would look like this:
+
+      ```
+      GET /your/route?sort=estimated_provider_fee{sum}estimated_platform_fee
+      ```
+
+-
+    - This will return the results sorted based on the sum of `estimated_provider_fee` and `estimated_platform_fee`.
+-
+    - Example query for sum: `?sort=estimated_provider_fee{sum}estimated_platform_fee`
 
 - **Filter**: Use query parameters to filter data based on specific attributes.
 -

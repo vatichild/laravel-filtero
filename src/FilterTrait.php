@@ -4,6 +4,7 @@ namespace Vati\Filtero;
 
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
+use DB;
 use Illuminate\Support\Arr;
 
 trait FilterTrait
@@ -91,10 +92,14 @@ trait FilterTrait
             $direction = $sortInput[0] == '-' ? 'DESC' : 'ASC';
             $sortKey = ltrim($request->input(config('filtero.sort_key')), '-');
             $relational = explode('.', $sortKey);
-            if (count($relational) > 1) {
-                $this->sortRelation($relational, $query, $direction);
-            } else {
-                $query->orderBy($sortKey, $direction);
+            if (in_array($sortKey, $this->sortable)) {
+                if (count($relational) > 1) {
+                    $this->sortRelation($relational, $query, $direction);
+                } else {
+                    if (!$this->sortWithSummedColumns($sortKey, $query, $direction)) {
+                        $this->where($this->getTable() . '.' . $sortKey, $direction);
+                    };
+                }
             }
         }
     }
@@ -349,5 +354,29 @@ trait FilterTrait
     {
         $operator = config('filtero.include_equal_in_range_filter') ? '<=' : '<';
         $query->where($tableColumn, $operator, $max);
+    }
+
+    /**
+     *  Sort a query by the sum of multiple columns.
+     *
+     *  This method takes a sort key string, splits it into column names,
+     *  and sorts the query based on the sum of these columns in the specified direction
+     *
+     * @param string $sortKey
+     * @param $query
+     * @param string $direction
+     * @return bool
+     */
+    public function sortWithSummedColumns(string $sortKey, $query, string $direction): bool
+    {
+        $sumArray = explode('{sum}', addslashes($sortKey));
+        if (count($sumArray)) {
+            $sumOfColumns = join('+', array_map(function ($column) {
+                return $this->getTable() . '.' . $column;
+            }, $sumArray));
+            $query->orderBy(DB::raw("($sumOfColumns)"), $direction);
+            return true;
+        }
+        return false;
     }
 }
