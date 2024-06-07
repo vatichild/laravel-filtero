@@ -67,6 +67,8 @@ $payments = YourModel::with(['recipient'])
             ->paginate($request->per_page ?? 10);
 ```
 
+If you only want to perform a search without filtering or sorting, you can use ```$payment->search()```.
+
 ### Api Endpoint Realistic Example
 
 Here's a realistic example of how you can use Filtero in your API endpoints:
