@@ -1,9 +1,8 @@
-
-
 # Filtero
 
 Filtero is a Laravel package that provides a convenient way to filter, search, and sort data from models and their
 relationships.
+You only have to provide request query params properly, and Filtero will handle the rest for you.
 
 ## Installation
 
@@ -81,6 +80,9 @@ Here's a realistic example of how you can use Filtero in your API endpoints:
 Your request can contain various options for filtering, searching, and sorting:
 
 - **Search**: Use the `search` query parameter to perform a search. Example: `?search=example@example.com`.
+-
+    - To search multiple columns as one, like searching for "John Doe" across first_name and last_name, use the
+      CONCAT_WS function in your searchable array.
 - **Sort**: Use the `sort` query parameter to specify the sorting column. You can use dot notation for relational
   sorting. Example: `?sort=recipient.first_name`.
 - **Filter**: Use query parameters to filter data based on specific attributes.
