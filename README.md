@@ -87,6 +87,8 @@ Your request can contain various options for filtering, searching, and sorting:
       CONCAT_WS function in your searchable array.
 - **Sort**: Use the `sort` query parameter to specify the sorting column. You can use dot notation for relational
   sorting. Example: `?sort=recipient.first_name`.
+- - Sort by the attribute in descending order: `?sort=-created_at`
+
 - **Filter**: Use query parameters to filter data based on specific attributes.
 -
     - For Example:
