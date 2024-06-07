@@ -123,7 +123,7 @@ Your request can contain various options for filtering, searching, and sorting:
   sorting. Example: `?sort=recipient.first_name`.
 -
     - Sort by the attribute in descending order: `?sort=-created_at`
-    -
+  
     - Let's say you want to sort the results based on the sum of `estimated_provider_fee` and `estimated_platform_fee`,
       in
       ascending order. Your request URL would look like this:
