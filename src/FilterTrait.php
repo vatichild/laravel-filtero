@@ -138,7 +138,8 @@ trait FilterTrait
     private function applyFilter($request, $item, $query): void
     {
         if ($request->has($item)) {
-            $query->where($item, $request->input($item));
+            $value = $request->input($item);
+            is_array($value) ? $query->whereIn($item, $value) : $query->where($item, $value);
         }
 
         $this->applyRanges($request, $item, $query);
@@ -160,18 +161,19 @@ trait FilterTrait
     private function filterRelations(array $item, $query, $request): void
     {
         foreach ($item as $relation => $columns) {
-            $query->whereHas($relation, function ($q) use ($relation, $columns, $request) {
-                foreach ($columns as $column) {
-                    $columnPath = $relation . '.' . $column;
-                    if ($this->$relation()) {
+            if ($this->$relation()) {
+                $query->whereHas($relation, function ($q) use ($relation, $columns, $request) {
+                    foreach ($columns as $column) {
+                        $columnPath = $relation . '.' . $column;
                         $tableColumn = $this->$relation()->getModel()->getTable() . '.' . $column;
                         $this->applyRelationRanges($request, $tableColumn, $columnPath, $q);
+                        if ($request->has($columnPath)) {
+                            $value = $request->input($columnPath);
+                            is_array($value) ? $q->whereIn($tableColumn, $value) : $q->where($tableColumn, $value);
+                        }
                     }
-                    if ($request->has($columnPath)) {
-                        $q->where($column, $request->input($columnPath));
-                    }
-                }
-            });
+                });
+            }
         }
     }
 
